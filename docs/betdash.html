@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>BetDash</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+
+
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/tabby.min.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-html-734cb40618f438257b19a1e532635a32.min.css" rel="stylesheet" append-hash="true" data-mode="light">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+
+<link rel="stylesheet" href="betdash.css">
+</head>
+
+<body>
+
+
+<header id="title-block-header">
+<h1 class="title">BetDash</h1>
+
+</header>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════════════════════════════ -->
+<nav class="bd-nav">
+  <span class="bd-brand">BetDash</span>
+  <div class="bd-nav-links" id="nav-links">
+    <button class="bd-nb active" data-page="analyse">Analyser</button>
+    <button class="bd-nb" data-page="stats">Mes stats</button>
+    <button class="bd-nb" data-page="historique">Historique</button>
+    <button class="bd-nb" data-page="profil">Profil</button>
+  </div>
+  <button class="bd-burger" id="burger" aria-label="menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="bd-wrap">
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE : ANALYSER
+══════════════════════════════════════════════════════════════ -->
+<section id="page-analyse" class="bd-page active">
+  <div class="bd-two-col">
+
+    <!-- Formulaire gauche -->
+    <div>
+      <div class="bd-card">
+        <div class="bd-card-hd">Le match</div>
+        <div class="bd-card-bd">
+          <div class="bd-g3">
+            <div class="bd-field">
+              <label>Sport</label>
+              <select id="f-sport">
+                <option value="foot">Football</option>
+                <option value="bask">Basketball</option>
+                <option value="ten">Tennis</option>
+                <option value="rug">Rugby</option>
+                <option value="aut">Autre</option>
+              </select>
+            </div>
+            <div class="bd-field">
+              <label>Compétition</label>
+              <input id="f-comp" type="text" placeholder="ex : Ligue 1, NBA…">
+            </div>
+            <div class="bd-field">
+              <label>Bookmaker</label>
+              <select id="f-book">
+                <option>Winamax</option><option>Betclic</option>
+                <option>Unibet</option><option>PMU</option><option>Autre</option>
+              </select>
+            </div>
+          </div>
+          <div class="bd-g2">
+            <div class="bd-field">
+              <label id="lbl-t1">Équipe 1</label>
+              <input id="f-t1" type="text" placeholder="ex : PSG">
+            </div>
+            <div class="bd-field">
+              <label id="lbl-t2">Équipe 2</label>
+              <input id="f-t2" type="text" placeholder="ex : Marseille">
+            </div>
+          </div>
+          <div class="bd-g2">
+            <div class="bd-field">
+              <label>Pari sur</label>
+              <select id="f-pick"></select>
+            </div>
+            <div class="bd-field">
+              <label>Cote</label>
+              <input id="f-cote" type="number" step="0.01" min="1.01" placeholder="ex : 1.85">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bd-card">
+        <div class="bd-card-hd">
+          Stats complémentaires
+          <span class="bd-hd-hint">facultatif — plus tu remplis, mieux c'est</span>
+        </div>
+        <div class="bd-card-bd">
+          <div class="bd-g3">
+            <div class="bd-field">
+              <label id="lbl-f1">Forme éq. 1</label>
+              <input id="f-forme1" type="text" placeholder="VVNDV" maxlength="10">
+              <span class="bd-hint">V=victoire N=nul D=défaite</span>
+            </div>
+            <div class="bd-field">
+              <label id="lbl-f2">Forme éq. 2</label>
+              <input id="f-forme2" type="text" placeholder="DVVVN" maxlength="10">
+            </div>
+            <div class="bd-field">
+              <label>H2H (5 dernières)</label>
+              <input id="f-h2h" type="text" placeholder="3V 1N 1D">
+            </div>
+          </div>
+          <div class="bd-g3">
+            <div class="bd-field">
+              <label id="lbl-bm">Buts marqués / match</label>
+              <input id="f-bm" type="number" step="0.1" min="0" placeholder="ex : 1.8">
+            </div>
+            <div class="bd-field">
+              <label id="lbl-be">Buts encaissés / match</label>
+              <input id="f-be" type="number" step="0.1" min="0" placeholder="ex : 0.9">
+            </div>
+            <div class="bd-field">
+              <label>Absents / blessés</label>
+              <input id="f-blesses" type="text" placeholder="ex : Mbappé">
+            </div>
+          </div>
+          <div class="bd-field">
+            <label>Notes libres</label>
+            <textarea id="f-notes" rows="2" placeholder="domicile fort, motivation, météo…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="bd-actions">
+        <button class="bd-btn-primary" id="btn-analyser">Analyser</button>
+        <button class="bd-btn-ghost" id="btn-reset">Effacer</button>
+        <span class="bd-fb" id="form-fb"></span>
+      </div>
+    </div>
+
+    <!-- Résultat droite -->
+    <div id="result-panel">
+      <div class="bd-empty" id="result-empty">
+        <svg width="44" height="44" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <p>Remplis le formulaire<br>et clique sur <strong>Analyser</strong></p>
+      </div>
+
+      <div id="result-content" style="display:none">
+        <div class="bd-verdict" id="verdict-box">
+          <div class="bd-verdict-icon" id="v-icon"></div>
+          <div>
+            <div class="bd-verdict-title" id="v-title"></div>
+            <div class="bd-verdict-sub" id="v-sub"></div>
+          </div>
+        </div>
+
+        <div class="bd-g2" style="margin-bottom:12px">
+          <div class="bd-metric-card">
+            <div class="bd-metric-lbl">Mise Kelly ¼</div>
+            <div class="bd-metric-val"><span id="k-val">—</span> <span class="bd-metric-unit">€</span></div>
+            <div class="bd-metric-sub" id="k-sub"></div>
+          </div>
+          <div class="bd-metric-card">
+            <div class="bd-metric-lbl">Probabilité implicite</div>
+            <div class="bd-metric-val"><span id="p-val">—</span> <span class="bd-metric-unit">%</span></div>
+            <div class="bd-metric-sub" id="p-sub"></div>
+            <div class="bd-mini-bar"><div class="bd-mini-fill" id="p-bar"></div></div>
+          </div>
+        </div>
+
+        <div class="bd-card">
+          <div class="bd-card-hd">Détail des critères</div>
+          <div class="bd-card-bd">
+            <div id="criteria-list"></div>
+            <div class="bd-score-wrap">
+              <div class="bd-score-row">
+                <span>Score de confiance</span>
+                <span id="score-num" class="bd-score-num"></span>
+              </div>
+              <div class="bd-score-track">
+                <div class="bd-score-fill" id="score-fill"></div>
+              </div>
+            </div>
+            <div id="tags-row" class="bd-tags"></div>
+          </div>
+        </div>
+
+        <div class="bd-card">
+          <div class="bd-card-hd">Ma mise réelle</div>
+          <div class="bd-card-bd">
+            <div class="bd-g2" style="align-items:flex-end">
+              <div class="bd-field">
+                <label>Combien je mise vraiment (€)</label>
+                <input id="f-mise-reelle" type="number" step="0.5" min="0" placeholder="ex : 20">
+                <span class="bd-hint">La mise Kelly est une suggestion — tu décides.</span>
+              </div>
+              <div class="bd-metric-card" style="margin-bottom:0">
+                <div class="bd-metric-lbl">Gain potentiel si victoire</div>
+                <div class="bd-metric-val"><span id="gain-potentiel">—</span> <span class="bd-metric-unit">€</span></div>
+                <div class="bd-metric-sub" id="gain-potentiel-sub"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bd-actions">
+          <button class="bd-btn-primary" id="btn-save">Enregistrer ce pari</button>
+          <span class="bd-fb" id="save-fb"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE : STATS
+══════════════════════════════════════════════════════════════ -->
+<section id="page-stats" class="bd-page">
+  <div class="bd-metrics-grid">
+    <div class="bd-metric-card"><div class="bd-metric-lbl">Bankroll actuelle</div><div class="bd-metric-val" id="s-bank">—</div><div class="bd-metric-sub" id="s-bank-sub"></div></div>
+    <div class="bd-metric-card"><div class="bd-metric-lbl">ROI</div><div class="bd-metric-val" id="s-roi">—</div><div class="bd-metric-sub">paris résolus</div></div>
+    <div class="bd-metric-card"><div class="bd-metric-lbl">Taux de réussite</div><div class="bd-metric-val" id="s-wr">—</div><div class="bd-metric-sub" id="s-wr-sub"></div></div>
+    <div class="bd-metric-card"><div class="bd-metric-lbl">Gain net</div><div class="bd-metric-val" id="s-gain">—</div><div class="bd-metric-sub">depuis le début</div></div>
+  </div>
+  <div class="bd-charts-row">
+    <div class="bd-card">
+      <div class="bd-card-hd">Résultats par sport</div>
+      <div class="bd-card-bd"><canvas id="chart-sport" height="210" role="img" aria-label="Répartition des paris par sport"></canvas></div>
+    </div>
+    <div class="bd-card">
+      <div class="bd-card-hd">Évolution de la bankroll</div>
+      <div class="bd-card-bd"><canvas id="chart-bank" height="210" role="img" aria-label="Évolution de la bankroll"></canvas></div>
+    </div>
+  </div>
+  <div class="bd-card">
+    <div class="bd-card-hd">Performances par sport</div>
+    <div class="bd-card-bd"><div id="sport-perf"></div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE : HISTORIQUE
+══════════════════════════════════════════════════════════════ -->
+<section id="page-historique" class="bd-page">
+  <div class="bd-toolbar">
+    <span class="bd-count" id="histo-count"></span>
+    <div class="bd-filters">
+      <select id="fil-sport">
+        <option value="">Tous sports</option>
+        <option value="foot">Football</option>
+        <option value="bask">Basketball</option>
+        <option value="ten">Tennis</option>
+        <option value="rug">Rugby</option>
+      </select>
+      <select id="fil-res">
+        <option value="">Tous résultats</option>
+        <option value="Gagné">Gagnés</option>
+        <option value="Perdu">Perdus</option>
+        <option value="En cours">En cours</option>
+      </select>
+      <button class="bd-btn-ghost" id="btn-export">Exporter CSV</button>
+    </div>
+  </div>
+
+  <div class="bd-card">
+    <div class="bd-table-wrap">
+      
+<table class="bd-table caption-top">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Date</th>
+<th data-quarto-table-cell-role="th">Match</th>
+<th data-quarto-table-cell-role="th">Pari</th>
+<th data-quarto-table-cell-role="th">Cote</th>
+<th data-quarto-table-cell-role="th">Mise réelle</th>
+<th data-quarto-table-cell-role="th">Gain potentiel</th>
+<th data-quarto-table-cell-role="th">Résultat</th>
+<th data-quarto-table-cell-role="th">Gain net</th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody id="histo-body">
+</tbody>
+</table>
+
+    </div>
+  </div>
+
+  <div class="bd-card">
+    <div class="bd-card-bd bd-upd-row">
+      <span class="bd-upd-lbl">Mettre à jour un résultat :</span>
+      <select id="upd-id" style="flex:1;min-width:160px"></select>
+      <select id="upd-res" style="width:130px">
+        <option>Gagné</option><option>Perdu</option><option>En cours</option>
+      </select>
+      <button class="bd-btn-primary" id="btn-upd">Valider</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE : PROFIL
+══════════════════════════════════════════════════════════════ -->
+<section id="page-profil" class="bd-page">
+  <div class="bd-two-col-eq">
+
+    <div class="bd-card">
+      <div class="bd-card-hd">Mon profil</div>
+      <div class="bd-card-bd">
+        <div class="bd-g2">
+          <div class="bd-field"><label>Bankroll de départ (€)</label><input id="p-bank" type="number" value="500" min="1" step="50"></div>
+          <div class="bd-field"><label>Mise max par pari (%)</label><input id="p-max" type="number" value="5" min="1" max="50" step="1"></div>
+        </div>
+        <div class="bd-g2">
+          <div class="bd-field">
+            <label>Style de jeu</label>
+            <select id="p-style">
+              <option value="prudent">Prudent — cotes sûres</option>
+              <option value="equilibre" selected="">Équilibré — value + gestion</option>
+              <option value="agressif">Agressif — grandes cotes</option>
+            </select>
+          </div>
+          <div class="bd-field"><label>Cote minimale</label><input id="p-cmin" type="number" value="1.40" min="1.01" step="0.05"></div>
+        </div>
+        <div class="bd-field"><label>Sources habituelles</label><input id="p-sources" type="text" placeholder="Sofascore, Flashscore, FBref…"></div>
+        <div class="bd-actions" style="margin-top:8px">
+          <button class="bd-btn-primary" id="btn-save-profil">Enregistrer</button>
+          <span class="bd-fb" id="profil-fb"></span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="bd-card">
+        <div class="bd-card-hd">Comment ça marche ?</div>
+        <div class="bd-card-bd bd-help">
+          <div class="bd-help-item"><strong>Score de confiance</strong><p>0–100 basé sur la forme, H2H, stats offensives/défensives, absents et value bet. Vert ≥ 68, orange ≥ 48.</p></div>
+          <div class="bd-help-item"><strong>Mise Kelly ¼</strong><p>Critère de Kelly divisé par 4. Conservateur, ne dépasse jamais ton plafond de mise max.</p></div>
+          <div class="bd-help-item"><strong>Value bet</strong><p>Positif = le bookmaker sous-estime la probabilité. C'est le signe d'une cote intéressante.</p></div>
+          <div class="bd-help-item" style="border:none;padding-bottom:0"><strong>Forme (VVNDV)</strong><p>V=3pts, N=1pt, D=0pt. Score = moyenne pondérée sur les matchs saisis.</p></div>
+        </div>
+      </div>
+      <div class="bd-card" style="margin-top:0">
+        <div class="bd-card-bd">
+          <p style="font-size:13px;color:var(--bd-muted);margin-bottom:10px">Supprimer toutes les données locales.</p>
+          <button class="bd-btn-danger" id="btn-reset-all">Tout effacer</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</div><!-- /.bd-wrap -->
+<script>
+/* ── BetDash · logique complète ─────────────────────────────────── */
+'use strict';
+
+const KEY_BETS  = 'betdash_bets_v3';
+const KEY_PREFS = 'betdash_prefs_v3';
+
+/* ── Persistance ── */
+const loadBets  = () => { try { return JSON.parse(localStorage.getItem(KEY_BETS)  || '[]'); } catch { return []; } };
+const saveBets  = b  => localStorage.setItem(KEY_BETS,  JSON.stringify(b));
+const loadPrefs = () => { try { return JSON.parse(localStorage.getItem(KEY_PREFS) || '{}'); } catch { return {}; } };
+const savePrefs = p  => localStorage.setItem(KEY_PREFS, JSON.stringify(p));
+
+const getPrefs = () => {
+  const p = loadPrefs();
+  return { bank: p.bank ?? 500, max: p.max ?? 5, style: p.style ?? 'equilibre', cmin: p.cmin ?? 1.40, sources: p.sources ?? '' };
+};
+
+/* ── Constantes sport ── */
+const SPORT_NAMES  = { foot:'Football', bask:'Basketball', ten:'Tennis', rug:'Rugby', aut:'Autre' };
+const SPORT_COLORS = { foot:'#1a4a8a', bask:'#c47a00', ten:'#1a6b38', rug:'#8b3060', aut:'#6b7280' };
+const PICKS = {
+  foot: ['Victoire 1','Nul','Victoire 2','+2.5 buts','-2.5 buts','Les deux marquent','1X','X2'],
+  bask: ['Victoire 1','Victoire 2','+210.5 pts','-210.5 pts','Handicap'],
+  ten:  ['Victoire 1','Victoire 2','+22.5 jeux','-22.5 jeux'],
+  rug:  ['Victoire 1','Victoire 2','Handicap','Total points'],
+  aut:  ['Option 1','Option 2']
+};
+
+/* ── Navigation ── */
+document.querySelectorAll('.bd-nb').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.bd-nb').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.bd-page').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('page-' + btn.dataset.page).classList.add('active');
+    document.getElementById('nav-links').classList.remove('open');
+    if (btn.dataset.page === 'stats')      renderStats();
+    if (btn.dataset.page === 'historique') renderHisto();
+    if (btn.dataset.page === 'profil')     loadProfileUI();
+  });
+});
+
+document.getElementById('burger').addEventListener('click', () => {
+  document.getElementById('nav-links').classList.toggle('open');
+});
+
+/* ── Sport → picks + labels ── */
+function updateSportUI() {
+  const s = document.getElementById('f-sport').value;
+  const isTen = s === 'ten';
+  document.getElementById('lbl-t1').textContent = isTen ? 'Joueur 1' : 'Équipe 1';
+  document.getElementById('lbl-t2').textContent = isTen ? 'Joueur 2' : 'Équipe 2';
+  document.getElementById('lbl-f1').textContent = isTen ? 'Forme joueur 1' : 'Forme éq. 1 (VVNDV)';
+  document.getElementById('lbl-f2').textContent = isTen ? 'Forme joueur 2' : 'Forme éq. 2 (VVNDV)';
+  document.getElementById('lbl-bm').textContent = isTen ? 'Jeux gagnés/match' : 'Buts marqués/match';
+  document.getElementById('lbl-be').textContent = isTen ? 'Jeux perdus/match'  : 'Buts encaissés/match';
+  document.getElementById('f-pick').innerHTML = (PICKS[s]||PICKS.aut).map(o => `<option>${o}</option>`).join('');
+}
+document.getElementById('f-sport').addEventListener('change', updateSportUI);
+updateSportUI();
+
+/* ── Calculs métier ── */
+const impliedProb = cote => parseFloat((100 / cote).toFixed(1));
+const valueBet    = (cote, prob) => parseFloat(((prob / 100) * cote - 1).toFixed(3));
+
+function kellyMise(cote, prob, bankroll, maxPct) {
+  const b = cote - 1, p = prob / 100, q = 1 - p, k = (b * p - q) / b;
+  if (k <= 0) return 0;
+  return parseFloat(Math.min(k * 0.25 * bankroll, bankroll * maxPct / 100).toFixed(2));
+}
+
+function parseForm(s) {
+  if (!s) return null;
+  const c = s.toUpperCase().replace(/[^VND]/g, '');
+  if (!c.length) return null;
+  return Math.round(c.split('').reduce((a, x) => a + (x==='V'?3:x==='N'?1:0), 0) / (c.length * 3) * 100);
+}
+
+function parseH2H(s) {
+  if (!s) return { v: null };
+  const v = parseInt((s.match(/(\d+)V/i)||[])[1])||0;
+  const n = parseInt((s.match(/(\d+)N/i)||[])[1])||0;
+  const d = parseInt((s.match(/(\d+)D/i)||[])[1])||0;
+  return v+n+d > 0 ? {v,n,d} : {v:null};
+}
+
+function computeScore({ cote, forme1, forme2, h2h, bm, be, blesses, coteMin, style }) {
+  let score = 50;
+  const details = [], tags = [];
+
+  const push = (lbl, val, cls, txt, pts, tag) => {
+    details.push({ lbl, val, cls, txt });
+    score += pts;
+    if (tag) tags.push(tag);
+  };
+
+  cote >= coteMin
+    ? push('Cote vs minimum profil', `${cote.toFixed(2)} ≥ ${coteMin.toFixed(2)}`, 'ok', 'Acceptable', 5)
+    : push('Cote vs minimum profil', `${cote.toFixed(2)} < ${coteMin.toFixed(2)}`, 'bad', 'Trop basse pour ton profil', -10, 'Cote trop faible');
+
+  const f1 = parseForm(forme1);
+  if (f1 !== null) {
+    const lvl = f1>=70?'Excellente':f1>=45?'Correcte':'Mauvaise';
+    const cls = f1>=70?'ok':f1>=45?'warn':'bad';
+    push('Forme équipe 1', `${f1}%`, cls, lvl, f1>=70?8:f1>=45?2:-8, f1>=70?'Bonne forme éq.1':f1<40?'Mauvaise forme éq.1':null);
+  }
+
+  const f2 = parseForm(forme2);
+  if (f2 !== null) {
+    const cls = f2>=70?'bad':f2>=45?'warn':'ok';
+    const txt = f2>=70?'Adversaire en grande forme':f2>=45?'Adversaire correct':'Adversaire en difficulté';
+    push('Forme adversaire', `${f2}%`, cls, txt, f2<40?6:f2>=70?-8:0, f2>=70?'Adversaire en forme':null);
+  }
+
+  if (h2h.v !== null) {
+    const tot = h2h.v + (h2h.n||0) + (h2h.d||0);
+    const r   = tot > 0 ? h2h.v / tot : 0;
+    const cls = r>=0.6?'ok':r>=0.4?'warn':'bad';
+    push('Historique H2H', `${h2h.v}V ${h2h.n||0}N ${h2h.d||0}D`, cls,
+         r>=0.6?'Favorable':r>=0.4?'Équilibré':'Défavorable',
+         r>=0.6?8:r>=0.4?2:-6, r>=0.6?'H2H favorable':null);
+  }
+
+  if (bm != null && !isNaN(bm)) {
+    const cls = bm>=1.8?'ok':bm>=1.2?'warn':'bad';
+    push('Buts marqués / match', bm.toFixed(1), cls,
+         bm>=1.8?'Attaque productive':bm>=1.2?'Attaque moyenne':'Attaque faible',
+         bm>=1.8?6:bm>=1.2?2:-4);
+  }
+
+  if (be != null && !isNaN(be)) {
+    const cls = be<=0.9?'ok':be<=1.4?'warn':'bad';
+    push('Buts encaissés / match', be.toFixed(1), cls,
+         be<=0.9?'Défense solide':be<=1.4?'Défense correcte':'Défense fragile',
+         be<=0.9?6:be<=1.4?2:-5, be<=0.9?'Défense solide':null);
+  }
+
+  if (blesses && blesses.trim())
+    push('Absents / blessés', blesses.trim(), 'warn', 'Impact à évaluer', -5, 'Absents signalés');
+
+  const prob = impliedProb(cote);
+  const vb   = valueBet(cote, prob);
+  vb > 0.05
+    ? push('Value bet', `+${(vb*100).toFixed(1)}%`, 'ok',   'Cote sous-évaluée', 8, 'Value bet détecté')
+    : vb > 0
+    ? push('Value bet', `+${(vb*100).toFixed(1)}%`, 'warn', 'Value légèrement positive', 0)
+    : push('Value bet', `${(vb*100).toFixed(1)}%`,  'bad',  'Pas de value', -6, 'Pas de value');
+
+  score += style==='prudent'?-5:style==='agressif'?5:0;
+  score  = Math.max(0, Math.min(100, score));
+
+  const verdict = score>=68
+    ? { txt:'Pari recommandé',  sub:'Les indicateurs sont favorables. Tu peux parier en confiance.', cls:'v-green', icon:'✓' }
+    : score>=48
+    ? { txt:'Pari à étudier',   sub:'Quelques signaux positifs, mais prudence. Mise modérée conseillée.', cls:'v-amber', icon:'~' }
+    : { txt:'Pari déconseillé', sub:"Trop d'incertitudes ou signaux négatifs. Passe ton tour.", cls:'v-red', icon:'✗' };
+
+  return { score, details, tags, verdict, prob, vb };
+}
+
+/* ── Analyser ── */
+let lastAnalysis = null;
+
+document.getElementById('btn-analyser').addEventListener('click', () => {
+  const t1   = document.getElementById('f-t1').value.trim();
+  const cote = parseFloat(document.getElementById('f-cote').value);
+  if (!t1 || !cote || cote < 1.01) { showFb('form-fb', 'Merci de renseigner au moins le nom et la cote.', true); return; }
+
+  const prefs  = getPrefs();
+  const result = computeScore({
+    cote,
+    forme1:  document.getElementById('f-forme1').value,
+    forme2:  document.getElementById('f-forme2').value,
+    h2h:     parseH2H(document.getElementById('f-h2h').value),
+    bm:      parseFloat(document.getElementById('f-bm').value) || null,
+    be:      parseFloat(document.getElementById('f-be').value) || null,
+    blesses: document.getElementById('f-blesses').value,
+    coteMin: prefs.cmin, style: prefs.style
+  });
+  const mise = kellyMise(cote, result.prob, prefs.bank, prefs.max);
+
+  lastAnalysis = {
+    t1, t2:   document.getElementById('f-t2').value.trim(),
+    sport:    document.getElementById('f-sport').value,
+    comp:     document.getElementById('f-comp').value.trim(),
+    pick:     document.getElementById('f-pick').value,
+    book:     document.getElementById('f-book').value,
+    cote, mise, score: result.score, prob: result.prob, vb: result.vb,
+    verdict:  result.verdict.txt, resultat: 'En cours',
+    date:     new Date().toLocaleDateString('fr-FR', {day:'numeric',month:'short',year:'numeric'}),
+    ts:       Date.now()
+  };
+
+  renderResult(result, mise, prefs);
+  document.getElementById('result-empty').style.display   = 'none';
+  document.getElementById('result-content').style.display = 'block';
+  // Pré-remplir la mise réelle avec la suggestion Kelly
+  const miseCh = document.getElementById('f-mise-reelle');
+  miseCh.value = mise > 0 ? mise.toFixed(2) : '';
+  updateGainPotentiel(cote);
+  document.getElementById('result-content').scrollIntoView({ behavior:'smooth', block:'nearest' });
+});
+
+function renderResult(res, mise, prefs) {
+  const { score, details, tags, verdict, prob, vb } = res;
+
+  const vb_box = document.getElementById('verdict-box');
+  vb_box.className = `bd-verdict ${verdict.cls}`;
+  document.getElementById('v-icon').textContent  = verdict.icon;
+  document.getElementById('v-title').textContent = verdict.txt;
+  document.getElementById('v-sub').textContent   = verdict.sub;
+
+  document.getElementById('k-val').textContent = mise > 0 ? mise.toFixed(2) : '0';
+  document.getElementById('k-sub').textContent = mise > 0
+    ? `Quart-Kelly sur ${prefs.bank} € · max ${(prefs.bank*prefs.max/100).toFixed(0)} €`
+    : 'Kelly négatif — cote insuffisante au vu du risque';
+  document.getElementById('p-val').textContent = prob.toFixed(1);
+  document.getElementById('p-sub').textContent = `Value : ${vb>=0?'+':''}${(vb*100).toFixed(1)} %`;
+  document.getElementById('p-bar').style.width = Math.min(prob,100) + '%';
+
+  document.getElementById('criteria-list').innerHTML = details.map(d =>
+    `<div class="bd-crit-row">
+      <span class="bd-crit-lbl">${d.lbl}</span>
+      <span>
+        <span class="bd-crit-val bd-${d.cls}">${d.val}</span>
+        <span class="bd-crit-hint">${d.txt}</span>
+      </span>
+    </div>`
+  ).join('');
+
+  const col = score>=68?'#1a6b38':score>=48?'#8a5e00':'#9b2020';
+  document.getElementById('score-fill').style.cssText = `width:${score}%;background:${col}`;
+  document.getElementById('score-num').textContent    = `${score} / 100`;
+  document.getElementById('score-num').style.color    = col;
+  document.getElementById('tags-row').innerHTML       = tags.map(t => `<span class="bd-tag">${t}</span>`).join('');
+}
+
+function updateGainPotentiel(cote) {
+  const mise = parseFloat(document.getElementById('f-mise-reelle').value);
+  const el   = document.getElementById('gain-potentiel');
+  const sub  = document.getElementById('gain-potentiel-sub');
+  if (!mise || isNaN(mise) || mise <= 0) { el.textContent = '—'; sub.textContent = ''; return; }
+  const gain = parseFloat(((cote - 1) * mise).toFixed(2));
+  el.textContent = `+${gain.toFixed(2)}`;
+  el.style.color = '#1a6b38';
+  sub.textContent = `mise ${mise.toFixed(2)} € × gain cote (${(cote-1).toFixed(2)})`;
+}
+
+document.getElementById('f-mise-reelle').addEventListener('input', () => {
+  const cote = parseFloat(document.getElementById('f-cote').value);
+  if (cote >= 1.01) updateGainPotentiel(cote);
+});
+
+document.getElementById('btn-save').addEventListener('click', () => {
+  if (!lastAnalysis) return;
+  const miseReelle = parseFloat(document.getElementById('f-mise-reelle').value);
+  if (!miseReelle || miseReelle <= 0) { showFb('save-fb', 'Saisis ta mise réelle avant d\'enregistrer.', true); return; }
+  const cote = lastAnalysis.cote;
+  const gainPotentiel = parseFloat(((cote - 1) * miseReelle).toFixed(2));
+  const bets = loadBets();
+  bets.unshift({ ...lastAnalysis, mise_reelle: miseReelle, gain_potentiel: gainPotentiel });
+  saveBets(bets);
+  showFb('save-fb', 'Pari enregistré !');
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  ['f-t1','f-t2','f-comp','f-forme1','f-forme2','f-h2h','f-blesses','f-notes'].forEach(id => document.getElementById(id).value = '');
+  ['f-cote','f-bm','f-be','f-mise-reelle'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('result-empty').style.display   = 'block';
+  document.getElementById('result-content').style.display = 'none';
+  lastAnalysis = null;
+});
+
+/* ── Stats ── */
+let cSport = null, cBank = null;
+
+function renderStats() {
+  const bets     = loadBets();
+  const prefs    = getPrefs();
+  const resolved = bets.filter(b => b.resultat==='Gagné'||b.resultat==='Perdu');
+  const won      = resolved.filter(b => b.resultat==='Gagné');
+  const lost     = resolved.filter(b => b.resultat==='Perdu');
+  const gainNet  = won.reduce((a,b) => a+(b.cote-1)*(b.mise_reelle??b.mise), 0) - lost.reduce((a,b)=>a+(b.mise_reelle??b.mise),0);
+  const totalMise= resolved.reduce((a,b)=>a+(b.mise_reelle??b.mise),0);
+  const roi      = totalMise>0 ? gainNet/totalMise*100 : 0;
+  const wr       = resolved.length>0 ? won.length/resolved.length*100 : null;
+  const curBank  = prefs.bank + gainNet;
+
+  document.getElementById('s-bank').textContent     = `${curBank.toFixed(0)} €`;
+  document.getElementById('s-bank-sub').textContent = `départ : ${prefs.bank} €`;
+
+  const roiEl = document.getElementById('s-roi');
+  roiEl.textContent = `${roi>=0?'+':''}${roi.toFixed(1)} %`;
+  roiEl.style.color = roi>=0?'#1a6b38':'#9b2020';
+
+  document.getElementById('s-wr').textContent     = wr!==null ? `${wr.toFixed(0)} %` : '—';
+  document.getElementById('s-wr-sub').textContent = `${won.length}V / ${lost.length}D sur ${resolved.length} paris`;
+
+  const gainEl = document.getElementById('s-gain');
+  gainEl.textContent = `${gainNet>=0?'+':''}${gainNet.toFixed(2)} €`;
+  gainEl.style.color = gainNet>=0?'#1a6b38':'#9b2020';
+
+  /* Donut sport */
+  const sports    = Object.keys(SPORT_NAMES);
+  const sd        = sports.map(s => ({s, n:bets.filter(b=>b.sport===s).length})).filter(d=>d.n>0);
+  if (cSport) cSport.destroy();
+  cSport = new Chart(document.getElementById('chart-sport').getContext('2d'), {
+    type:'doughnut',
+    data:{ labels: sd.map(d=>SPORT_NAMES[d.s]), datasets:[{ data:sd.map(d=>d.n), backgroundColor:sd.map(d=>SPORT_COLORS[d.s]||'#6b7280'), borderWidth:2, borderColor:'#fff' }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'56%',
+      plugins:{ legend:{display:true,position:'right',labels:{font:{family:'DM Sans',size:12},boxWidth:12,padding:12}},
+                tooltip:{callbacks:{label:c=>` ${c.label} : ${c.parsed} paris`}} } }
+  });
+
+  /* Ligne bankroll */
+  const sorted = [...bets].filter(b=>b.resultat!=='En cours').sort((a,b)=>a.ts-b.ts);
+  let cur = prefs.bank;
+  const pts = [{ x:'Départ', y:prefs.bank }];
+  sorted.forEach(b => { cur += b.resultat==='Gagné'?(b.cote-1)*(b.mise_reelle??b.mise):-(b.mise_reelle??b.mise); pts.push({x:b.date, y:parseFloat(cur.toFixed(2))}); });
+  if (cBank) cBank.destroy();
+  const pos = cur >= prefs.bank;
+  cBank = new Chart(document.getElementById('chart-bank').getContext('2d'), {
+    type:'line',
+    data:{ labels:pts.map(p=>p.x), datasets:[{ data:pts.map(p=>p.y), borderColor:pos?'#1a6b38':'#9b2020', backgroundColor:pos?'rgba(26,107,56,.08)':'rgba(155,32,32,.08)', fill:true, tension:.4, pointRadius:0, pointHoverRadius:4, borderWidth:2 }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.y.toFixed(2)} €`}} },
+      scales:{ x:{grid:{display:false},ticks:{maxRotation:0,maxTicksLimit:6,font:{size:11},color:'#9ca3af'}},
+               y:{grid:{color:'#f0f2f5'},ticks:{font:{size:11},color:'#9ca3af',callback:v=>v+' €'}} } }
+  });
+
+  /* Perf par sport */
+  const rows = sports.map(s => {
+    const sb = resolved.filter(b=>b.sport===s);
+    if (!sb.length) return null;
+    const w = sb.filter(b=>b.resultat==='Gagné').length;
+    const g = sb.filter(b=>b.resultat==='Gagné').reduce((a,b)=>a+(b.cote-1)*(b.mise_reelle??b.mise),0) - sb.filter(b=>b.resultat==='Perdu').reduce((a,b)=>a+(b.mise_reelle??b.mise),0);
+    const moy = (sb.reduce((a,b)=>a+b.cote,0)/sb.length).toFixed(2);
+    return `<div class="bd-perf-row"><span style="font-weight:500">${SPORT_NAMES[s]}</span><span>${sb.length}</span><span>${Math.round(w/sb.length*100)} %</span><span>${moy}</span><span style="color:${g>=0?'#1a6b38':'#9b2020'};font-weight:500">${g>=0?'+':''}${g.toFixed(2)} €</span></div>`;
+  }).filter(Boolean);
+
+  document.getElementById('sport-perf').innerHTML = rows.length
+    ? `<div class="bd-perf-row bd-perf-head"><span>Sport</span><span>Paris</span><span>Réussite</span><span>Cote moy.</span><span>Gain net</span></div>${rows.join('')}`
+    : '<p style="color:var(--bd-muted);font-size:13px">Aucune donnée.</p>';
+}
+
+/* ── Historique ── */
+function renderHisto() {
+  const bets     = loadBets();
+  const fs       = document.getElementById('fil-sport').value;
+  const fr       = document.getElementById('fil-res').value;
+  const filtered = bets.filter(b => (!fs||b.sport===fs) && (!fr||b.resultat===fr));
+
+  document.getElementById('histo-count').textContent = `${filtered.length} pari${filtered.length>1?'s':''}`;
+
+  const enCours = bets.filter(b=>b.resultat==='En cours');
+  document.getElementById('upd-id').innerHTML = enCours.length
+    ? enCours.map(b=>`<option value="${b.ts}">${b.t1}${b.t2?' vs '+b.t2:''} — ${b.cote.toFixed(2)} (${b.date})</option>`).join('')
+    : '<option value="">Aucun pari en cours</option>';
+
+  const tbody = document.getElementById('histo-body');
+  if (!filtered.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--bd-hint);padding:2rem">Aucun pari pour ces filtres.</td></tr>`; return; }
+
+  tbody.innerHTML = filtered.map(b => {
+    const mr   = b.mise_reelle ?? b.mise;
+    const gain = b.resultat==='Gagné'?(b.cote-1)*mr:b.resultat==='Perdu'?-mr:null;
+    const gTxt = gain!==null ? `<span style="color:${gain>=0?'#1a6b38':'#9b2020'};font-weight:500">${gain>=0?'+':''}${gain.toFixed(2)} €</span>` : '—';
+    const gpTxt = b.gain_potentiel != null ? `<span style="color:#1a4a8a">+${b.gain_potentiel.toFixed(2)} €</span>` : '—';
+    const badge = b.resultat==='Gagné'?'bd-badge-green':b.resultat==='Perdu'?'bd-badge-red':'bd-badge-amber';
+    return `<tr>
+      <td style="color:var(--bd-hint);white-space:nowrap;font-size:12px">${b.date}</td>
+      <td><span style="font-weight:500">${b.t1}${b.t2?' vs '+b.t2:''}</span><br><span style="font-size:11px;color:var(--bd-hint)">${b.pick}</span></td>
+      <td>${b.cote.toFixed(2)}</td>
+      <td>${mr.toFixed(0)} €</td>
+      <td>${gpTxt}</td>
+      <td><span class="bd-badge ${badge}">${b.resultat}</span></td>
+      <td>${gTxt}</td>
+      <td><button class="bd-btn-ghost" style="padding:3px 8px;font-size:12px" onclick="deleteBet(${b.ts})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+window.deleteBet = ts => {
+  if (!confirm('Supprimer ce pari ?')) return;
+  saveBets(loadBets().filter(b=>b.ts!==ts)); renderHisto();
+};
+
+['fil-sport','fil-res'].forEach(id => document.getElementById(id).addEventListener('change', renderHisto));
+
+document.getElementById('btn-upd').addEventListener('click', () => {
+  const ts  = parseInt(document.getElementById('upd-id').value);
+  const res = document.getElementById('upd-res').value;
+  if (!ts) return;
+  const bets = loadBets(), idx = bets.findIndex(b=>b.ts===ts);
+  if (idx>=0) { bets[idx].resultat = res; saveBets(bets); renderHisto(); }
+});
+
+document.getElementById('btn-export').addEventListener('click', () => {
+  const bets = loadBets();
+  const cols = ['date','sport','comp','t1','t2','pick','cote','mise','resultat','book','score','prob','vb'];
+  const csv  = [cols.join(','), ...bets.map(b=>cols.map(c=>`"${(b[c]??'').toString().replace(/"/g,'""')}"`).join(','))].join('\n');
+  const a    = Object.assign(document.createElement('a'), { href:'data:text/csv;charset=utf-8,'+encodeURIComponent(csv), download:`betdash_${new Date().toISOString().slice(0,10)}.csv` });
+  a.click();
+});
+
+/* ── Profil ── */
+function loadProfileUI() {
+  const p = getPrefs();
+  document.getElementById('p-bank').value    = p.bank;
+  document.getElementById('p-max').value     = p.max;
+  document.getElementById('p-style').value   = p.style;
+  document.getElementById('p-cmin').value    = p.cmin;
+  document.getElementById('p-sources').value = p.sources;
+}
+
+document.getElementById('btn-save-profil').addEventListener('click', () => {
+  savePrefs({ bank:parseFloat(document.getElementById('p-bank').value)||500, max:parseFloat(document.getElementById('p-max').value)||5, style:document.getElementById('p-style').value, cmin:parseFloat(document.getElementById('p-cmin').value)||1.40, sources:document.getElementById('p-sources').value });
+  showFb('profil-fb', 'Profil enregistré !');
+});
+
+document.getElementById('btn-reset-all').addEventListener('click', () => {
+  if (!confirm('Supprimer tous les paris et réinitialiser le profil ?')) return;
+  localStorage.removeItem(KEY_BETS); localStorage.removeItem(KEY_PREFS); location.reload();
+});
+
+/* ── Helpers ── */
+function showFb(id, msg, err=false) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.style.color = err ? '#9b2020' : '#1a6b38';
+  setTimeout(() => el.textContent = '', 3000);
+}
+
+loadProfileUI();
+</script>
+
+
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+    tabsets.forEach(function(tabset) {
+      const tabby = new Tabby('#' + tabset.id);
+    });
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+
+
+
+
+</body></html>
